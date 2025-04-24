@@ -34,20 +34,6 @@ class AlissdaPlugin {
     });
   }
 
-  // // 监听评测结果
-  // static void startListeningToResults() {
-  //   _eventChannel.receiveBroadcastStream().listen(
-  //         (result) {
-  //       print('Received result: $result');
-  //       // 处理评测结果
-  //     },
-  //     onError: (error) {
-  //       print('Error occurred: $error');
-  //       // 处理错误信息
-  //     },
-  //   );
-  // }
-
   // 监听评测结果
   static Stream<dynamic> startListeningToResults() {
     return _eventChannel.receiveBroadcastStream();
