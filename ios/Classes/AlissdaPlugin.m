@@ -3,58 +3,141 @@
 #import <SingSound/SSOralEvaluatingManager.h> // Import the SingSound framework
 #import <SingSound/SSOralEvaluatingManagerConfig.h> // Import the SingSound framework
 
+@interface AlissdaPlugin() <SSOralEvaluatingManagerDelegate>
+@property (nonatomic, strong) FlutterMethodChannel *methodChannel;
+@property (nonatomic, strong) FlutterEventChannel *eventChannel;
+@property (nonatomic, strong) FlutterEventSink eventSink;
+@end
+
 @implementation AlissdaPlugin
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-                                   methodChannelWithName:@"alissda"
-                                   binaryMessenger:[registrar messenger]];
-  FlutterEventChannel* eventChannel = [FlutterEventChannel
-                                      eventChannelWithName:@"alissda/events"
-                                      binaryMessenger:[registrar messenger]];
   AlissdaPlugin* instance = [[AlissdaPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
-  [eventChannel setStreamHandler:instance];
+  instance.methodChannel = [FlutterMethodChannel
+      methodChannelWithName:@"alissda"
+            binaryMessenger:[registrar messenger]];
+  [registrar addMethodCallDelegate:instance channel:instance.methodChannel];
+
+  instance.eventChannel = [FlutterEventChannel
+      eventChannelWithName:@"alissda/events"
+           binaryMessenger:[registrar messenger]];
+  [instance.eventChannel setStreamHandler:instance];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"initialize" isEqualToString:call.method]) {
-    NSDictionary* arguments = call.arguments;
-    NSString* appKey = arguments[@"appKey"];
-    NSString* secretKey = arguments[@"secretKey"];
-    [self initializeWithAppKey:appKey secretKey:secretKey];
-    result(nil);
+    NSString *appKey = call.arguments[@"appKey"];
+    NSString *secretKey = call.arguments[@"secretKey"];
+    NSString *userId = call.arguments[@"userId"];
+    [self initializeEngineWithAppKey:appKey secretKey:secretKey userId:userId];
+    result(@"initialized");
   } else if ([@"startEvaluation" isEqualToString:call.method]) {
-    NSDictionary* arguments = call.arguments;
-    NSString* userId = arguments[@"userId"];
-    NSString* refText = arguments[@"refText"];
-    [self startEvaluationWithUserId:userId refText:refText];
-    result(nil);
+    NSString *userId = call.arguments[@"userId"];
+    NSString *refText = call.arguments[@"refText"];
+    NSString *coreType = call.arguments[@"coreType"];
+    [self startEvaluationWithUserId:userId refText:refText coreType:coreType];
+    result(@"started");
   } else if ([@"stopEvaluation" isEqualToString:call.method]) {
     [self stopEvaluation];
-    result(nil);
+    result(@"stopped");
+  } else if ([@"setAuthInfo" isEqualToString:call.method]) {
+    NSString *warrantId = call.arguments[@"warrantId"];
+    NSNumber *authTimeout = call.arguments[@"authTimeout"];
+    NSString *authTimeoutString = [authTimeout stringValue];
+    [self setAuthInfoWithWarrantId:warrantId AuthTimeout:authTimeoutString];
+    result(@"authInfoSet");
   } else {
     result(FlutterMethodNotImplemented);
   }
 }
 
-// 初始化
-- (void)initializeWithAppKey:(NSString*)appKey secretKey:(NSString*)secretKey {
-  SSOralEvaluatingManagerConfig *config = [[SSOralEvaluatingManagerConfig alloc] init];
-  config.appKey = appKey;
-  config.secretKey = secretKey;
-  [SSOralEvaluatingManager registerEvaluatingManagerConfig:config];
+- (void)initializeEngineWithAppKey:(NSString *)appKey secretKey:(NSString *)secretKey userId:(NSString *)userId  {
+  SSOralEvaluatingManagerConfig *managerConfig = [[SSOralEvaluatingManagerConfig alloc] init];
+  managerConfig.appKey = appKey;
+  managerConfig.secretKey = secretKey;
+  managerConfig.logLevel = @4;
+  managerConfig.isOutputLog = YES;
+  managerConfig.allowDynamicService = YES;
+
+  [SSOralEvaluatingManager registerEvaluatingManagerConfig:managerConfig];
+  NSLog(@"这是一条来自 Flutter 插件的日志---- ");
+  NSLog(userId);
+
+  [[SSOralEvaluatingManager shareManager] registerEvaluatingType:OralEvaluatingTypeLine userId:userId];
+
+  [SSOralEvaluatingManager shareManager].delegate = self;
 }
 
-// 开始评测
-- (void)startEvaluationWithUserId:(NSString*)userId refText:(NSString*)refText {
-  SSOralEvaluatingConfig* config = [[SSOralEvaluatingConfig alloc] init];
-  config.oralContent = refText;
-  config.oralType = OralTypeWord;
+- (void)startEvaluationWithUserId:(NSString *)userId refText:(NSString *)refText coreType:(NSString *)coreType {
+    SSOralEvaluatingConfig *config = [[SSOralEvaluatingConfig alloc] init];
+    config.oralContent = refText;
+    config.userId = userId;
+    if ([coreType isEqualToString:@"en.pred.score"]) {
+        config.oralType = OralTypeParagraph;
+    } else {
+        config.oralType = OralTypeSentence;
+    }
+
   [[SSOralEvaluatingManager shareManager] startEvaluateOralWithConfig:config];
 }
 
-// 停止评测
 - (void)stopEvaluation {
   [[SSOralEvaluatingManager shareManager] stopEvaluate];
 }
+
+- (void)setAuthInfoWithWarrantId:(NSString *)warrantId AuthTimeout:(NSString *) authTimeout {
+  [[SSOralEvaluatingManager shareManager] setAuthInfoWithWarrantId:warrantId AuthTimeout:authTimeout];
+}
+
+#pragma mark - SSOralEvaluatingManagerDelegate
+
+- (void)oralEvaluatingDidEndWithResult:(NSString *)result isLast:(BOOL)isLast {
+  if (self.eventSink) {
+      NSError *error;
+      NSData *jsonData = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
+      NSString *aaa;
+      if (!jsonData) {
+          NSLog(@"Error converting to JSON: %@", error);
+          aaa = @'Error converting to JSON';
+      }else{
+          aaa = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+      }
+
+    self.eventSink([NSString stringWithFormat:@"onResult: %@", aaa]);
+  }
+}
+
+- (void)oralEvaluatingDidEndError:(NSError *)error {
+  if (self.eventSink) {
+    self.eventSink([FlutterError errorWithCode:@"onERROR"
+                                       message:error.localizedDescription
+                                       details:nil]);
+  }
+}
+
+- (void)oralEvaluatingDidVADFrontTimeOut {
+  if (self.eventSink) {
+    self.eventSink(@"frontVadTimeout");
+  }
+}
+
+- (void)oralEvaluatingDidVADBackTimeOut {
+  if (self.eventSink) {
+    self.eventSink(@"backVadTimeout");
+  }
+}
+
+#pragma mark - FlutterStreamHandler
+
+- (FlutterError *)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)events {
+  self.eventSink = events;
+  return nil;
+}
+
+- (FlutterError *)onCancelWithArguments:(id)arguments {
+  self.eventSink = nil;
+  return nil;
+}
+
 @end
+

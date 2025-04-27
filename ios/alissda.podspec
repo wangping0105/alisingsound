@@ -20,13 +20,27 @@ A new Flutter plugin project.
   s.swift_version = '5.0'
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'
+  }
 
-  s.vendored_frameworks = 'Frameworks/SingSound.framework'
-  s.preserve_paths = 'Frameworks/SingSound.framework'
-  # If your plugin requires a privacy manifest, for example if it uses any
-  # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
-  # plugin's privacy impact, and then uncomment this line. For more information,
-  # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-  # s.resource_bundles = {'alissda_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+#   s.vendored_frameworks = 'Frameworks/SingSound.framework'
+#   s.preserve_paths = 'Frameworks/SingSound.framework'
+
+  # 添加 SingSoundSDK 依赖
+    s.dependency 'SingSoundSDK'
+
+    # 指定源
+    s.source = {
+      :git => 'https://pt.singsound.com:10081/singsound-public/SingSoundSDKCocoaPodRepo.git',
+      :tag => s.version.to_s
+    }
+
+    # 如果需要手动添加源
+    s.prepare_command = <<-CMD
+      if ! pod repo list | grep -q "SingSoundSDKCocoaPodRepo"; then
+        pod repo add SingSoundSDKCocoaPodRepo https://pt.singsound.com:10081/singsound-public/SingSoundSDKCocoaPodRepo.git
+      fi
+    CMD
 end

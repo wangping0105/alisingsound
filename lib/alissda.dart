@@ -5,10 +5,11 @@ class AlissdaPlugin {
   static const EventChannel _eventChannel = EventChannel('alissda/events');
 
   // 初始化引擎
-  static Future<void> initialize(String appKey, String secretKey) async {
+  static Future<void> initialize(String appKey, String secretKey, String userId) async {
     await _channel.invokeMethod('initialize', {
       'appKey': appKey,
       'secretKey': secretKey,
+      'userId': userId,
     });
   }
 
@@ -16,6 +17,8 @@ class AlissdaPlugin {
   static Future<void> startEvaluation(String userId, String refText, String coreType) async {
     await _channel.invokeMethod('startEvaluation', {
       'userId': userId,
+
+
       'refText': refText,
       'coreType': coreType
     });
