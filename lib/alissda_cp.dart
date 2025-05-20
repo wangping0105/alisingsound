@@ -3,14 +3,9 @@ import 'package:flutter/services.dart';
 class AlissdaPlugin {
   static const MethodChannel _channel = MethodChannel('alissda');
   static const EventChannel _eventChannel = EventChannel('alissda/events');
-  static late String appKey;
-  static late String secretKey;
-  static late String userId;
+
   // 初始化引擎
-  static Future<void> init(
-      {required String appKey,
-        required String secretKey,
-        required String userId}) async {
+  static Future<void> initialize(String appKey, String secretKey, String userId) async {s
     await _channel.invokeMethod('initialize', {
       'appKey': appKey,
       'secretKey': secretKey,
@@ -19,14 +14,18 @@ class AlissdaPlugin {
   }
 
   // 开始评测
-  static Future<void> start(
-      {required String refText, required String coreType}) async {
-    await _channel.invokeMethod('startEvaluation',
-        {'userId': userId, 'refText': refText, 'coreType': coreType});
+  static Future<void> startEvaluation(String userId, String refText, String coreType) async {
+    await _channel.invokeMethod('startEvaluation', {
+      'userId': userId,
+
+
+      'refText': refText,
+      'coreType': coreType
+    });
   }
 
   // 停止评测
-  static Future<void> stop() async {
+  static Future<void> stopEvaluation() async {
     await _channel.invokeMethod('stopEvaluation');
   }
 
@@ -38,5 +37,8 @@ class AlissdaPlugin {
     });
   }
 
-  Stream<dynamic> get messageStream => _eventChannel.receiveBroadcastStream();
+  // 监听评测结果
+  static Stream<dynamic> startListeningToResults() {
+    return _eventChannel.receiveBroadcastStream();
+  }
 }
