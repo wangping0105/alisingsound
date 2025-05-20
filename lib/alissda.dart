@@ -3,14 +3,17 @@ import 'package:flutter/services.dart';
 class AlissdaPlugin {
   static const MethodChannel _channel = MethodChannel('alissda');
   static const EventChannel _eventChannel = EventChannel('alissda/events');
-  static late String appKey;
-  static late String secretKey;
-  static late String userId;
+  static final String appKey = '';
+  static final String secretKey = '';
+  static final String userId = '';
   // 初始化引擎
   static Future<void> init(
       {required String appKey,
         required String secretKey,
         required String userId}) async {
+    userId = userId;
+    secretKey = secretKey;
+    appKey = appKey;
     await _channel.invokeMethod('initialize', {
       'appKey': appKey,
       'secretKey': secretKey,
