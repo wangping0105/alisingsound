@@ -31,12 +31,12 @@ class AlissdaPlugin {
   }
 
   // 设置授权信息
-  static Future<void> setAuthInfo(String warrantId, int authTimeout) async {
+  static Future<void> setAuthInfo({required String warrantId, int authTimeout = 7200}) async {
     await _channel.invokeMethod('setAuthInfo', {
       'warrantId': warrantId,
       'authTimeout': authTimeout,
     });
   }
 
-  Stream<dynamic> get messageStream => _eventChannel.receiveBroadcastStream();
+  static Stream<dynamic> get messageStream => _eventChannel.receiveBroadcastStream();
 }
