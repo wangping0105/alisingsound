@@ -33,8 +33,12 @@ A new Flutter plugin project.
 
     # 指定源
     s.source = {
-      :git => 'https://pt.singsound.com:10081/singsound-public/SingSoundSDKCocoaPodRepo.git',
-      :tag => s.version.to_s
+      :git => 'https://pt.singsound.com:10081/singsound-public/SingSoundSDKCocoaPodRepo.git'
+    }
+
+    # 指定源
+    s.source = {
+      :git => 'https://github.com/CocoaPods/Specs.git'
     }
 
     # 如果需要手动添加源
