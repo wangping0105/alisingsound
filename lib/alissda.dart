@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 class AlissdaPlugin {
   static const MethodChannel _channel = MethodChannel('alissda');
   static const EventChannel _eventChannel = EventChannel('alissda/events');
-  static final String appKey = '';
-  static final String secretKey = '';
-  static final String userId = '';
+  static String _appKey = '';
+  static String _secretKey = '';
+  static String _userId = '';
   // 初始化引擎
-  static Future<void> init(
-      {required String appKey,
-        required String secretKey,
-        required String userId}) async {
-    userId = userId;
-    secretKey = secretKey;
-    appKey = appKey;
+  static Future<void> init({
+    required String appKey,
+    required String secretKey,
+    required String userId,
+  }) async {
+    _userId = userId;
+    _secretKey = secretKey;
+    _appKey = appKey;
     await _channel.invokeMethod('initialize', {
       'appKey': appKey,
       'secretKey': secretKey,
@@ -22,10 +23,15 @@ class AlissdaPlugin {
   }
 
   // 开始评测
-  static Future<void> start(
-      {required String refText, required String coreType}) async {
-    await _channel.invokeMethod('startEvaluation',
-        {'userId': userId, 'refText': refText, 'coreType': coreType});
+  static Future<void> start({
+    required String refText,
+    required String coreType,
+  }) async {
+    await _channel.invokeMethod('startEvaluation', {
+      'userId': _userId,
+      'refText': refText,
+      'coreType': coreType,
+    });
   }
 
   // 停止评测
@@ -34,12 +40,16 @@ class AlissdaPlugin {
   }
 
   // 设置授权信息
-  static Future<void> setAuthInfo({required String warrantId, int authTimeout = 7200}) async {
+  static Future<void> setAuthInfo({
+    required String warrantId,
+    int authTimeout = 7200,
+  }) async {
     await _channel.invokeMethod('setAuthInfo', {
       'warrantId': warrantId,
       'authTimeout': authTimeout,
     });
   }
 
-  static Stream<dynamic> get messageStream => _eventChannel.receiveBroadcastStream();
+  static Stream<dynamic> get messageStream =>
+      _eventChannel.receiveBroadcastStream();
 }
