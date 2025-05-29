@@ -26,11 +26,17 @@ class AlissdaPlugin {
   static Future<void> start({
     required String refText,
     required String coreType,
+    int outputPhones = 1,
+    int typeThres = 2,
+    bool checkPhones = true,
   }) async {
     await _channel.invokeMethod('startEvaluation', {
       'userId': _userId,
       'refText': refText,
       'coreType': coreType,
+      'outputPhones': outputPhones,
+      'typeThres': typeThres,
+      'checkPhones': checkPhones,
     });
   }
 

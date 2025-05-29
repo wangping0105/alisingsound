@@ -198,12 +198,16 @@ class AlissdaPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAw
     }.start()
   }
 
-  private fun startEvaluation(userId: String, refText: String, coreType: String) {
+  private fun startEvaluation(userId: String, refText: String, coreType: String, outputPhones: Int, checkPhones: Boolean, typeThres: Int) {
     try {
       val request = JSONObject().apply {
         put("coreType", coreType)
         put("refText", refText)
         put("rank", 100)
+        put("audioUrlScheme", "https")
+        put("outputPhones", outputPhones)
+        put("checkPhones", checkPhones)
+        put("typeThres", typeThres)
       }
       mEngine?.apply {
         setStartCfg(buildStartJson(userId, request))

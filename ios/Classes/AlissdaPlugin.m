@@ -68,10 +68,17 @@
   [SSOralEvaluatingManager shareManager].delegate = self;
 }
 
-- (void)startEvaluationWithUserId:(NSString *)userId refText:(NSString *)refText coreType:(NSString *)coreType {
+- (void)startEvaluationWithUserId:(NSString *)userId refText:(NSString *)refText coreType:(NSString *)coreType
+    outputPhones:(NSInteger)outputPhones
+    checkPhones:(BOOL)checkPhones
+    typeThres:(NSInteger)typeThres {
     SSOralEvaluatingConfig *config = [[SSOralEvaluatingConfig alloc] init];
     config.oralContent = refText;
     config.userId = userId;
+    config.audioUrlScheme = "https";
+    config.outputPhones = outputPhones; //1;
+    config.checkPhones = checkPhones; //true;
+    config.typeThres = typeThres;//1;
     if ([coreType isEqualToString:@"en.pred.score"]) {
         config.oralType = OralTypeParagraph;
     } else {
