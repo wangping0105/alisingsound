@@ -35,7 +35,17 @@
     NSString *userId = call.arguments[@"userId"];
     NSString *refText = call.arguments[@"refText"];
     NSString *coreType = call.arguments[@"coreType"];
-    [self startEvaluationWithUserId:userId refText:refText coreType:coreType];
+    NSNumber *outputPhonesNum = call.arguments[@"outputPhones"];
+    NSNumber *typeThresNum = call.arguments[@"typeThres"];
+    NSNumber *checkPhonesNum = call.arguments[@"checkPhones"];
+
+    [self startEvaluationWithUserId:userId
+                            refText:refText
+                           coreType:coreType
+                        checkPhones:[checkPhonesNum boolValue]
+                          typeThres:[typeThresNum integerValue]
+                       outputPhones:[outputPhonesNum integerValue]];
+//     [self startEvaluationWithUserId:userId refText:refText coreType:coreType ];
     result(@"started");
   } else if ([@"stopEvaluation" isEqualToString:call.method]) {
     [self stopEvaluation];
@@ -69,13 +79,14 @@
 }
 
 - (void)startEvaluationWithUserId:(NSString *)userId refText:(NSString *)refText coreType:(NSString *)coreType
-    outputPhones:(NSInteger)outputPhones
     checkPhones:(BOOL)checkPhones
-    typeThres:(NSInteger)typeThres {
+    typeThres:(NSInteger)typeThres
+    outputPhones:(NSInteger)outputPhones
+     {
     SSOralEvaluatingConfig *config = [[SSOralEvaluatingConfig alloc] init];
     config.oralContent = refText;
     config.userId = userId;
-    config.audioUrlScheme = "https";
+    config.audioUrlScheme = @"https";
     config.outputPhones = outputPhones; //1;
     config.checkPhones = checkPhones; //true;
     config.typeThres = typeThres;//1;

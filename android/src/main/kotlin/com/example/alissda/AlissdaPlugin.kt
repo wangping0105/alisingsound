@@ -87,10 +87,13 @@ class AlissdaPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAw
         result.success("initialized")
       }
       "startEvaluation" -> {
-        val userId = call.argument<String>("userId").orEmpty()
-        val refText = call.argument<String>("refText").orEmpty()
-        val coreType = call.argument<String>("coreType").orEmpty()
-        startEvaluation(userId, refText, coreType)
+        val userId = call.argument<String>("userId") ?: ""
+        val refText = call.argument<String>("refText") ?: ""
+        val coreType = call.argument<String>("coreType") ?: ""
+        val outputPhones = call.argument<Int>("outputPhones") ?: 0
+        val typeThres = call.argument<Int>("typeThres") ?: 0
+        val checkPhones = call.argument<Boolean>("checkPhones") ?: false
+        startEvaluation(userId, refText, coreType, outputPhones, checkPhones, typeThres)
         result.success("started")
       }
       "stopEvaluation" -> {
