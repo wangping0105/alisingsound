@@ -90,11 +90,54 @@
     config.outputPhones = outputPhones; //1;
     config.checkPhones = checkPhones; //true;
     config.typeThres = typeThres;//1;
+
     if ([coreType isEqualToString:@"en.pred.score"]) {
         config.oralType = OralTypeParagraph;
+    } else if ([coreType isEqualToString:@"en.word.score"]) {
+        config.oralType = OralTypeWord;
+    } else if ([coreType isEqualToString:@"en.sent.score"]) {
+        config.oralType = OralTypeSentence;
+    } else if ([coreType isEqualToString:@"en.choc.score"]) {
+        config.oralType = OralTypeChoose;
+    } else if ([coreType isEqualToString:@"en.pqan.score"]) {
+        config.oralType = OralTypeEssayQuestion;
+    } else if ([coreType isEqualToString:@"en.pict.score"]) {
+        config.oralType = OralTypePicture;
+    } else if ([coreType isEqualToString:@"cn.word.score"]) {
+        config.oralType = OralTypeChineseWord;
+    } else if ([coreType isEqualToString:@"cn.sent.score"]) {
+        config.oralType = OralTypeChineseSentence;
+    } else if ([coreType isEqualToString:@"cn.pcha.score"]) {
+        config.oralType = OralTypeChinesePcha;
+    } else if ([coreType isEqualToString:@"cn.pred.score"]) {
+        config.oralType = OralTypeChinesePred;
+    } else if ([coreType isEqualToString:@"en.pcha.score"]) {
+        config.oralType = OralTypeEnglishPcha;
+    } else if ([coreType isEqualToString:@"en.alpha.score"]) {
+        config.oralType = OralTypeAlpha;
+    } else if ([coreType isEqualToString:@"en.sent.rec"]) {
+        config.oralType = OralTypeRec;
+    } else if ([coreType isEqualToString:@"en.pche.score"]) {
+        config.oralType = OralTypePche;
+    } else if ([coreType isEqualToString:@"en.retell.score"]) {
+        config.oralType = OralTypeRetell;
+    } else if ([coreType isEqualToString:@"en.word_kid.score"]) {
+        config.oralType = OralTypeKidWord;
+    } else if ([coreType isEqualToString:@"en.sent_kid.score"]) {
+        config.oralType = OralTypeKidSent;
+    } else if ([coreType isEqualToString:@"en.mpd.score"]) {
+        config.oralType = OralTypeMpd;
+    } else if ([coreType isEqualToString:@"cn.poet.score"]) {
+        config.oralType = OralTypePoet;
+    } else if ([coreType isEqualToString:@"cn.sent.rec"]) {
+        config.oralType = OralTypeCnRec;
+    } else if ([coreType isEqualToString:@"en.sent.rec_en"]) {
+        config.oralType = OralTypeEnRec;
     } else {
+        // 默认为句子类型
         config.oralType = OralTypeSentence;
     }
+
 
   [[SSOralEvaluatingManager shareManager] startEvaluateOralWithConfig:config];
 }
