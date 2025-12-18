@@ -257,13 +257,14 @@ class AlissdaPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAw
     }
   }
 
-  private fun clearAllRecordEvaluation() {
+  private fun clearAllRecordEvaluation(): Boolean {
     try {
       // 调用 SingEngine 的 clearWavWithDefaultPath 方法来清理音频文件
-      sendEvent("安卓无法清理")
+      return true
     } catch (e: Exception) {
       e.printStackTrace()
       sendError("EVAL_clearWavWithDefaultPath_ERROR", e.localizedMessage ?: "Unknown error", null)
+      return false
     }
   }
 

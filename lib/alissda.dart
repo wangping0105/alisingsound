@@ -73,12 +73,12 @@ class AlissdaPlugin {
   }
 
   /// 清除所有录音记录
-  static Future<void> clearAllRecord() async {
-    await _channel.invokeMethod('clearAllRecordEvaluation');
+  static Future<bool> clearAllRecord() async {
+    final bool result = await _channel.invokeMethod('clearAllRecordEvaluation');
+    return result;
   }
 
   /// 设置授权信息
-  ///
   /// [warrantId] 授权ID
   /// [authTimeout] 授权超时时间(秒)，默认为 7200 秒(2小时)
   static Future<void> setAuthInfo({

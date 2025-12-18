@@ -155,7 +155,7 @@
 }
 
 - (bool)clearAllRecordEvaluation {
-  [[SSOralEvaluatingManager shareManager] clearAllRecord];
+  return [SSOralEvaluatingManager clearAllRecord];
 }
 
 - (void)setAuthInfoWithWarrantId:(NSString *)warrantId AuthTimeout:(NSString *) authTimeout {
