@@ -154,7 +154,7 @@
   [[SSOralEvaluatingManager shareManager] engineDealloc];
 }
 
-- (void)clearAllRecordEvaluation {
+- (bool)clearAllRecordEvaluation {
   [[SSOralEvaluatingManager shareManager] clearAllRecord];
 }
 
