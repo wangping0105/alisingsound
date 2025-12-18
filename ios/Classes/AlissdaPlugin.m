@@ -56,6 +56,15 @@
     NSString *authTimeoutString = [authTimeout stringValue];
     [self setAuthInfoWithWarrantId:warrantId AuthTimeout:authTimeoutString];
     result(@"authInfoSet");
+  } else if ([@"deleteSafeEvaluation" isEqualToString:call.method]) {
+    [self deleteSafeEvaluation];
+    result(@"deleted");
+  } else if ([@"cancelEvaluation" isEqualToString:call.method]) {
+    [self cancelEvaluation];
+    result(@"cancelled");
+  } else if ([@"clearAllRecordEvaluation" isEqualToString:call.method]) {
+    bool clearResult = [self clearAllRecordEvaluation];
+    result(@(clearResult));
   } else {
     result(FlutterMethodNotImplemented);
   }

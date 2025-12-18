@@ -100,6 +100,18 @@ class AlissdaPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAw
         stopEvaluation()
         result.success("stopped")
       }
+      "cancelEvaluation" -> {
+        cancelEvaluation()
+        result.success("cancelled")
+      }
+      "deleteSafeEvaluation" -> {
+        deleteSafeEvaluation()
+        result.success("deleted")
+      }
+      "clearAllRecordEvaluation" -> {
+        val clearResult = clearAllRecordEvaluation()
+        result.success(clearResult)
+      }
       "setAuthInfo" -> {
         val warrantId = call.argument<String>("warrantId").orEmpty()
         val authTimeout = call.argument<Int>("authTimeout") ?: 0

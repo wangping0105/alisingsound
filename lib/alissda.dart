@@ -68,7 +68,7 @@ class AlissdaPlugin {
   }
 
   /// 安全删除评测引擎
-  static Future<void> deleteSafe() async {
+  static Future<void> dispose() async {
     await _channel.invokeMethod('deleteSafeEvaluation');
   }
 
