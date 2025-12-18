@@ -146,6 +146,18 @@
   [[SSOralEvaluatingManager shareManager] stopEvaluate];
 }
 
+- (void)cancelEvaluation {
+  [[SSOralEvaluatingManager shareManager] cancelEvaluate];
+}
+
+- (void)deleteSafeEvaluation {
+  [[SSOralEvaluatingManager shareManager] engineDealloc];
+}
+
+- (void)clearAllRecordEvaluation {
+  [[SSOralEvaluatingManager shareManager] clearAllRecord];
+}
+
 - (void)setAuthInfoWithWarrantId:(NSString *)warrantId AuthTimeout:(NSString *) authTimeout {
   [[SSOralEvaluatingManager shareManager] setAuthInfoWithWarrantId:warrantId AuthTimeout:authTimeout];
 }
